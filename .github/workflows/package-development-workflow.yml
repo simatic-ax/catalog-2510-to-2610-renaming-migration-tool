@@ -1,0 +1,35 @@
+name: Package Development Workflow
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+
+jobs:
+  test:
+    # We do not run a Windows matrix here: there is no Windows GitHub
+    # runner with apax installed available to us, so a Windows job would
+    # only cover the pure-Node paths of this template and give a false
+    # sense of coverage. The Windows-specific pieces of the template
+    # (cross-spawn wrapping of `.CMD` shims in src/lib/run-subprocess.ts)
+    # are still shipped and exercised locally by maintainers.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # When invoked via workflow_call (from the release workflow), check
+          # out the reference the release was created against. Otherwise use
+          # the ref that triggered the push or pull request.
+          ref: ${{ inputs.ref != '' && inputs.ref || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run build
+      - run: npm test

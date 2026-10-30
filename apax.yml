@@ -1,0 +1,23 @@
+name: "@simatic-ax/catalog-2510-to-2610-renaming-migration-tool"
+version: 1.1.0
+type: generic
+description: Migrates SIMATIC AX catalog 2510 projects to catalog 2610.
+keywords:
+  - contributed-commands
+  - typescript
+files:
+  - dist
+  - README.md
+  - apax.yml
+  - LICENSE.md
+
+scripts:
+  prepack:
+    - npm ci
+    - npm run check
+
+contributedCommands:
+  migratetocatalog2610:
+    bin: dist/contributed-migrate.js
+    description: Migrates a SIMATIC AX catalog 2510 project to catalog 2610.
+    hidden: false
